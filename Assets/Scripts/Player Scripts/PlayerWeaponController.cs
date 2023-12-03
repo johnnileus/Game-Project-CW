@@ -1,25 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour{
 
-    private Camera cam;
+
     [SerializeField] private LayerMask layersToIgnore;
 
     [SerializeField] private GameObject testball;
 
+    [SerializeField] private float shootDelay;
+    private float lastShot;
+
+
+    private Camera cam;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
+        lastShot = Time.time;
         cam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0)) {
+        //test if can shoot twice in frame
+        if (Input.GetMouseButton(0) && lastShot + shootDelay < Time.time) {
+            lastShot = Time.time; 
             RaycastHit hit;
             Vector3 destination;
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
@@ -33,8 +42,15 @@ public class PlayerWeaponController : MonoBehaviour{
             }
 
             //hit.collider.gameObject;
-            print(hit.collider.gameObject.GetComponent<EnemyHitbox>().hitboxSection);
-            testball.transform.position = destination;
+            if (hit.collider && hit.collider.gameObject.tag == "EnemyHitbox") {
+                print(hit.collider.gameObject.GetComponent<EnemyHitbox>().hitboxSection);
+                hit.collider.gameObject.GetComponent<EnemyHitbox>().OnHit();
+            }
+            else {
+                print("other");
+            }
+            
+            //testball.transform.position = destination;
         }
     }
 }
