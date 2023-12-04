@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
@@ -44,8 +45,9 @@ public class MapGenerator1 : MonoBehaviour{
     public GameObject[] hallwayPrefabs;
     public GameObject spawnPrefab;
     public GameObject gateRoom;
+    public NavMeshSurface navMeshSurface;
 
-
+    //rotation amount
     private Dictionary<(bool, bool, bool, bool), float>
         rotationDict = new Dictionary<(bool, bool, bool, bool), float>() {
             {(true, false, false, false), 0}, //n
@@ -70,7 +72,8 @@ public class MapGenerator1 : MonoBehaviour{
             {(false, false, false, false), 0} //
             
         };
-
+    
+    //room prefabs
     private Dictionary<(bool, bool, bool, bool), GameObject[]> prefabDict = new Dictionary<(bool, bool, bool, bool), GameObject[]>();
 
     private Cell CreateDefaultCell(){
@@ -340,6 +343,8 @@ public class MapGenerator1 : MonoBehaviour{
         
 
         GenerateMap();
+        
+        navMeshSurface.BuildNavMesh();
 
     }
 

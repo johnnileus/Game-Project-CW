@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerWeaponController : MonoBehaviour{
 
 
     [SerializeField] private LayerMask layersToIgnore;
 
-    [SerializeField] private GameObject testball;
+    [SerializeField] private GameObject SparkPS;
+    [SerializeField] private GameObject BloodPS;
 
-    [SerializeField] private float shootDelay;
+    [SerializeField] private float pistolShootDelay;
     private float lastShot;
 
 
@@ -27,7 +29,7 @@ public class PlayerWeaponController : MonoBehaviour{
     void Update()
     {
         //test if can shoot twice in frame
-        if (Input.GetMouseButton(0) && lastShot + shootDelay < Time.time) {
+        if (Input.GetMouseButton(0) && lastShot + pistolShootDelay < Time.time) {
             lastShot = Time.time; 
             RaycastHit hit;
             Vector3 destination;
@@ -40,17 +42,14 @@ public class PlayerWeaponController : MonoBehaviour{
             else {
                 destination = ray.GetPoint(100);
             }
-
-            //hit.collider.gameObject;
-            if (hit.collider && hit.collider.gameObject.tag == "EnemyHitbox") {
-                print(hit.collider.gameObject.GetComponent<EnemyHitbox>().hitboxSection);
-                hit.collider.gameObject.GetComponent<EnemyHitbox>().OnHit();
+            
+            if (hit.collider && hit.collider.gameObject.CompareTag("EnemyHitbox")) {
+                Instantiate(BloodPS, destination, Quaternion.identity, gameObject.transform);
+                hit.collider.gameObject.GetComponent<EnemyHitbox>().OnHit(1);
             }
             else {
-                print("other");
+                Instantiate(SparkPS, destination, Quaternion.identity, gameObject.transform);
             }
-            
-            //testball.transform.position = destination;
         }
     }
 }

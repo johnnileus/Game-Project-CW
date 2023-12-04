@@ -23,7 +23,7 @@ public class DungeonRoom : MonoBehaviour{
     // Start is called before the first frame update
     void Start(){
         
-        int2Door = new Dictionary<int, GameObject>() {
+        int2Door = new Dictionary<int, GameObject> {
             { 0, northDoor },
             { 1, eastDoor },
             { 2, southDoor },
