@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour{
     [SerializeField] private float maxHealth;
     [SerializeField] private float lookAtRotSpeed;
     
+    private bool alerted = false;
     private float alertness = 0;
     [SerializeField] private float alertIncRate;
     [SerializeField] private float alertDecRate;
@@ -44,7 +45,7 @@ public class EnemyController : MonoBehaviour{
         Dead
     }
 
-    private bool alerted = false;
+
     private ActionStates curState = ActionStates.Idle;
 
     
@@ -60,11 +61,15 @@ public class EnemyController : MonoBehaviour{
     public void DealDamage(float dmg){
         health -= dmg;
         if (health <= 0) {
-            modelAnimator.Play("pistol death");
             health = 0;
-            curState = ActionStates.Dead;
+            Kill();
         }
         print($"{health} {dmg}");
+    }
+
+    public void Kill(){
+        modelAnimator.Play("pistol death");
+        curState = ActionStates.Dead;
     }
 
     private void SetNewPatrol(){
@@ -142,10 +147,10 @@ public class EnemyController : MonoBehaviour{
             }
             
             
-            if (alerted) {
+            if (alerted && curState != ActionStates.Dead) {
                 redAlert.SetActive(true);
                 yellowAlert.SetActive(false);
-            } else if (alertness > 0) {
+            } else if (alertness > 0 && curState != ActionStates.Dead) {
                 redAlert.SetActive(false);
                 yellowAlert.SetActive(true);
             }

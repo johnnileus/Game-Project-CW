@@ -20,7 +20,6 @@ public class PlayerHealthManager : MonoBehaviour{
 
     public void UpdateVignette(){
         vignetteScript.radius = vignetteRadius.Evaluate(health / maxHealth);
-        print($"{health}/{maxHealth}");
     }
     
     public void DamagePlayer(float amt){

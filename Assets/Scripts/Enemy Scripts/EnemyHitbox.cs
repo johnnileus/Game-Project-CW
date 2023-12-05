@@ -26,7 +26,11 @@ public class EnemyHitbox : MonoBehaviour{
     }
 
     public void OnHit(float dmg){
-        parentEnemy.DealDamage(dmg * dmgDict[hitboxSection]);
+        parentEnemy.DealDamage(dmg * dmgDict[hitboxSection] * Random.Range(0.9f, 1.1f));
+    }
+
+    public void KillEnemy(){
+        parentEnemy.Kill();
     }
     
     // Update is called once per frame
