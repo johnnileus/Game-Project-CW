@@ -25,18 +25,27 @@ public class EnemyController : MonoBehaviour{
     [SerializeField] private float patrolDelay;
     private float lastPatrol;
 
+    [SerializeField] private AnimationCurve hitChance;
+    [SerializeField] private GameObject gunFlash;
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private float shootDelay;
+    [SerializeField] private float shootOffset;
+    private float lastShot;
 
+    [SerializeField] private GameObject yellowAlert;
+    [SerializeField] private GameObject redAlert;
+    
+    
     private Vector3 prevPos;
-    private enum AnimState{
+    private enum ActionStates{
         Idle,
         Walking,
-        Running,
         Prone,
         Dead
     }
 
     private bool alerted = false;
-    private AnimState currentAnim = AnimState.Idle;
+    private ActionStates curState = ActionStates.Idle;
 
     
     // Start is called before the first frame update
@@ -45,6 +54,7 @@ public class EnemyController : MonoBehaviour{
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player");
         lastPatrol = Time.time;
+        lastShot = Time.time;
     }
 
     public void DealDamage(float dmg){
@@ -52,8 +62,8 @@ public class EnemyController : MonoBehaviour{
         if (health <= 0) {
             modelAnimator.Play("pistol death");
             health = 0;
+            curState = ActionStates.Dead;
         }
-        currentAnim = AnimState.Dead;
         print($"{health} {dmg}");
     }
 
@@ -100,49 +110,84 @@ public class EnemyController : MonoBehaviour{
     
     // Update is called once per frame
     void Update(){
-        if (currentAnim != AnimState.Dead) {
+        if (curState != ActionStates.Dead) {
 
             Vector3 curPos = transform.position + new Vector3(0, enemyHeadHeight, 0);
             Vector3 playerPos = player.transform.position;
+            float dist = Vector3.Distance(curPos, playerPos);
             float speed = Vector3.Distance(curPos, prevPos) / Time.deltaTime;
 
 
 
-            //check for los
-            if (Physics.Linecast(curPos, playerPos, ~layersToIgnore)) {
+            //check for line of sight
+            bool LOS = !Physics.Linecast(curPos, playerPos, ~layersToIgnore);
+            if (LOS) {
+                alertness += alertIncRate * Time.deltaTime;
+            }
+            else {
                 alertness -= alertDecRate * Time.deltaTime;
                 if (alertness < 0) {
                     alertness = 0;
                 }
             }
-            else {
-                alertness += alertIncRate * Time.deltaTime;
-            }
 
             if (!alerted) {
-                if (alertness > 1) {
-                    SetAlert(true);
-                }
-
                 if (lastPatrol + patrolDelay < Time.time) {
                     SetNewPatrol();
                     lastPatrol = Time.time;
                 }
+                if (alertness > 1) {
+                    SetAlert(true);
+                }
+            }
+            
+            
+            if (alerted) {
+                redAlert.SetActive(true);
+                yellowAlert.SetActive(false);
+            } else if (alertness > 0) {
+                redAlert.SetActive(false);
+                yellowAlert.SetActive(true);
+            }
+            else {
+                redAlert.SetActive(false);
+                yellowAlert.SetActive(false);
             }
 
             //animations
             if (speed < .01) {
-                modelAnimator.Play("pistol idle");
                 if (alerted) {
                     turnToPlayer();
+                    if (curState != ActionStates.Prone) {
+                        modelAnimator.Play("pistol idle2kneel");
+                        curState = ActionStates.Prone;
+                    }
+                }
+                else {
+                    curState = ActionStates.Idle;
+                    modelAnimator.Play("pistol idle");
                 }
             }
             else {
+                curState = ActionStates.Walking;
                 modelAnimator.Play("pistol walk");
                 // modelAnimator.speed = speed / agent.speed;
             }
-
-
+            
+            
+            //shoot player
+            if (curState == ActionStates.Prone && LOS) {
+                if (lastShot + shootDelay < Time.time) {
+                    lastShot = Time.time + Random.Range(-shootOffset, shootOffset);
+                    Instantiate(gunFlash, shootPoint.position, Quaternion.identity);
+                    if (Random.Range(0f, 1f) < hitChance.Evaluate(dist)) {
+                        player.GetComponent<PlayerHealthManager>().DamagePlayer(10);
+                    }
+                }
+                else {
+                    
+                }
+            }
 
             prevPos = curPos;
         }
