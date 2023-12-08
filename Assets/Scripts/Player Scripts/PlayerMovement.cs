@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour{
 
     public float speed;
     public float runSpeed;
+    public float crouchSpeed;
+    public float crouchHeight;
     public float extraGravity;
 
     public float jumpForce;
@@ -34,7 +36,13 @@ public class PlayerMovement : MonoBehaviour{
     [SerializeField] private PhysicMaterial plrStatic;
     [SerializeField] private PhysicMaterial plrUngrounded;
     
+    private enum MovementState{
+        walk,
+        run,
+        crouch
+    }
 
+    private MovementState currentState = MovementState.walk;
     public void Update(){
         
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.05f, whatIsGround);
@@ -63,6 +71,17 @@ public class PlayerMovement : MonoBehaviour{
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
         }
+
+        if (Input.GetKey(KeyCode.LeftControl)) {
+            currentState = MovementState.crouch;
+            transform.GetComponent<CapsuleCollider>().height = crouchHeight;
+        } else if (Input.GetKey(KeyCode.LeftShift)) {
+            currentState = MovementState.run;
+            transform.GetComponent<CapsuleCollider>().height = 2f;
+        } else {
+            currentState = MovementState.walk;
+            transform.GetComponent<CapsuleCollider>().height = 2f;
+        }
     }
     
     public void Start(){
@@ -74,8 +93,15 @@ public class PlayerMovement : MonoBehaviour{
 
     void MovePlayer(){
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-        rb.AddForce(moveDirection.normalized * speed * 10f, ForceMode.Force);
+        if (currentState == MovementState.run) {
+            rb.AddForce(moveDirection.normalized * runSpeed, ForceMode.Force);
+        } 
+        else if (currentState == MovementState.walk) {
+            rb.AddForce(moveDirection.normalized * speed, ForceMode.Force);
+        }
+        else { // crouch
+            rb.AddForce(moveDirection.normalized * crouchSpeed, ForceMode.Force);
+        }
     }
 
     void FixedUpdate () {

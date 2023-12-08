@@ -7,6 +7,13 @@ using UnityEngine.Serialization;
 public class Interactable : MonoBehaviour{
     public bool active;
 
+    enum Options{
+        Button,
+        FishBarrel
+    }
+
+    [SerializeField] private Options option;
+    
     [SerializeField] private GameObject[] objectsToAnimate;
     [SerializeField] private GameObject[] objectsToDelete;
     [SerializeField] private GameObject[] objectsToDrop;
@@ -16,21 +23,28 @@ public class Interactable : MonoBehaviour{
     }
 
     public void OnPress(){
-        
-        //animate object array
-        foreach (var i in objectsToAnimate) {
-            i.GetComponent<Animation>().Play();
-        }
-        
-        //delete object array
-        foreach (var i in objectsToDelete) {
-            Destroy(i);
-        }
+        if (active) {
+            if (option == Options.Button) {
+                //animate object array
+                foreach (var i in objectsToAnimate) {
+                    i.GetComponent<Animation>().Play();
+                }
 
-        foreach (var i in objectsToDrop) {
-            i.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-        }
+                //delete object array
+                foreach (var i in objectsToDelete) {
+                    Destroy(i);
+                }
 
-        active = false;
+                foreach (var i in objectsToDrop) {
+                    i.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+                }
+
+                active = false;
+            }
+            else { // if fish barrel
+                
+            }
+        }
     }
 }
+

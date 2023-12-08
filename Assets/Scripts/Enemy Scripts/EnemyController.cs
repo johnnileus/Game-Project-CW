@@ -61,15 +61,17 @@ public class EnemyController : MonoBehaviour{
     public void DealDamage(float dmg){
         health -= dmg;
         if (health <= 0) {
-            health = 0;
             Kill();
         }
         print($"{health} {dmg}");
     }
 
     public void Kill(){
+        agent.SetDestination(transform.position);
         modelAnimator.Play("pistol death");
         curState = ActionStates.Dead;
+        agent.enabled = false;
+        health = 0;
     }
 
     private void SetNewPatrol(){
@@ -135,7 +137,8 @@ public class EnemyController : MonoBehaviour{
                     alertness = 0;
                 }
             }
-
+            
+            //patrol
             if (!alerted) {
                 if (lastPatrol + patrolDelay < Time.time) {
                     SetNewPatrol();
@@ -146,7 +149,7 @@ public class EnemyController : MonoBehaviour{
                 }
             }
             
-            
+            // set alert symbol
             if (alerted && curState != ActionStates.Dead) {
                 redAlert.SetActive(true);
                 yellowAlert.SetActive(false);
