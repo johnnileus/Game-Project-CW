@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine.Utility;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -16,10 +17,11 @@ public class FlockingController : MonoBehaviour{
     [SerializeField] private int fishAmt;
     [SerializeField] private float fishSpeed;
     [SerializeField] private float visionDist;
+    [SerializeField] private float repulsionVisionDist;
     [SerializeField] private float barrelSize;
     [SerializeField] private float barrelEdgeSize;
     [SerializeField] private float edgeForce;
-    [SerializeField] private float alignmentStrength;
+    [SerializeField][Range(0f,.99f)] private float alignmentStrength;
     [SerializeField] private float repulsionStrength;
     [SerializeField] private float maxRepulsion;
 
@@ -48,8 +50,14 @@ public class FlockingController : MonoBehaviour{
         for (int i = 0; i < fishAmt; i++) {
             Transform child = FishesGO.transform.GetChild(i);
             Fish fish = fishes[i];
+            try {
+                SetFishGOPos(fish, child);
+            }
+            catch (Exception e) {
+                print($"error {e}, {i} {fish.pos} {fish.vel}");
+                throw;
+            }
 
-            SetFishGOPos(fish, child);
             Vector3 vel = new Vector3(fish.vel.x, 0, fish.vel.y);
             child.transform.LookAt(child.transform.position + vel);
         }
@@ -74,8 +82,13 @@ public class FlockingController : MonoBehaviour{
                         // cohesion
                         totalPos += fishes[j].pos;
                         // repulsion
-                        Vector2 vecToFish = (fishes[j].pos - fish.pos).normalized;
-                        totalRepulsion += vecToFish * (1 / Vector2.Distance(fish.pos, fishes[j].pos));
+                        if (dist < repulsionVisionDist) {
+                            Vector2 vecToFish = (fishes[j].pos - fish.pos).normalized;
+                            Vector2 fishRep = vecToFish * (1 / Vector2.Distance(fish.pos, fishes[j].pos));
+                            totalRepulsion += fishRep;
+                            
+                            
+                        }
 
                     }   
                 }
@@ -83,13 +96,17 @@ public class FlockingController : MonoBehaviour{
             
 
             
-            Vector2 avgVel = totalVel / fishAmt;
-            Vector2 avgPos = totalPos / fishAmt;
-            Vector2 avgRepulsion = totalRepulsion / fishAmt;
+            Vector2 avgVel = totalVel / fishAmt; //alignment
+            Vector2 avgPos = totalPos / fishAmt; //cohesion
+            Vector2 avgRepulsion = totalRepulsion / fishAmt; //repulsion
 
-            fish.vel = Vector2.Lerp(fish.vel, avgVel,Mathf.Min(alignmentStrength* Time.deltaTime, 1));
+
+            //alignment
+            Vector2 newVel = Vector2.Lerp(fish.vel, avgVel, alignmentStrength);
+            fish.vel = newVel;
             
-            Vector2 repulsion = avgRepulsion * repulsionStrength * Time.deltaTime;
+
+            Vector2 repulsion = avgRepulsion * repulsionStrength;
             if (repulsion.magnitude > maxRepulsion) {
                 repulsion = repulsion.normalized * maxRepulsion;
             }
@@ -101,9 +118,13 @@ public class FlockingController : MonoBehaviour{
                 fish.vel = Vector2.Reflect(fish.vel, -fish.pos.normalized);
                 fish.pos.Normalize();
                 fish.pos *= barrelSize - .01f;
-            } //push away from edge of barrel
+            } //push away from edge of barrel linearly
             else if (distToCenter > barrelEdgeSize) {
-                fish.vel -= edgeForce * fish.pos * Time.deltaTime;
+
+                float edgeDepth = fish.pos.magnitude - barrelEdgeSize;
+                float repulsionFromEdge = edgeDepth / (barrelSize - barrelEdgeSize) * edgeForce;
+                fish.vel -= fish.pos.normalized * repulsionFromEdge;
+
             }
 
             

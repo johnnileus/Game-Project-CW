@@ -304,7 +304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7636498157394885719, guid: 80d966bd9c49d6e438a34a247a783923, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8213499805645303770, guid: 80d966bd9c49d6e438a34a247a783923, type: 3}
       propertyPath: m_LocalPosition.y
@@ -725,9 +725,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FishesGO: {fileID: 1992859356}
   FishPrefab: {fileID: 4669234385808700064, guid: c63ac3e1d6c999843bd03626db49001b, type: 3}
-  fishAmt: 25
+  fishAmt: 30
   fishSpeed: 2
-  visionDist: 0
+  visionDist: 1
+  barrelSize: 5
+  barrelEdgeSize: 4
+  edgeForce: 0.2
+  alignmentStrength: 25
+  repulsionStrength: 50
+  maxRepulsion: 10
 --- !u!1 &794897454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1300,7 +1306,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1115033853
 Transform:
   m_ObjectHideFlags: 0
@@ -1309,7 +1315,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1115033852}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -5.37, z: 0}
   m_LocalScale: {x: 10, y: 4.5118, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
