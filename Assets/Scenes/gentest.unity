@@ -725,15 +725,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FishesGO: {fileID: 1992859356}
   FishPrefab: {fileID: 4669234385808700064, guid: c63ac3e1d6c999843bd03626db49001b, type: 3}
-  fishAmt: 30
-  fishSpeed: 2
-  visionDist: 1
+  fishAmt: 150
+  fishSpeed: 2.56
+  visionDist: 0.82
   barrelSize: 5
   barrelEdgeSize: 4
-  edgeForce: 0.2
-  alignmentStrength: 25
-  repulsionStrength: 50
-  maxRepulsion: 10
+  edgeForce: 0.16
+  repulsionVisionDist: 0.42
+  repulsionStrength: 4.34
+  maxRepulsion: 2.72
+  cohesionStrength: 0.103
+  alignmentStrength: 0.386
 --- !u!1 &794897454
 GameObject:
   m_ObjectHideFlags: 0
