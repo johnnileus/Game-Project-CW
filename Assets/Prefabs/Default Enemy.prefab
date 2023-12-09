@@ -1229,7 +1229,7 @@ Transform:
   - {fileID: 569735603829445513}
   - {fileID: 1972753262560598724}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8174502201323607785
 MonoBehaviour:
@@ -1259,18 +1259,18 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.7
-      inSlope: -0.0325
-      outSlope: -0.0325
+      value: 1
+      inSlope: -0.04
+      outSlope: -0.04
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 20
-      value: 0.05
-      inSlope: -0.0325
-      outSlope: -0.0325
+      value: 0.2
+      inSlope: -0.04
+      outSlope: -0.04
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334

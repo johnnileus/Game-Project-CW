@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -18,8 +19,11 @@ public class Interactable : MonoBehaviour{
     [SerializeField] private GameObject[] objectsToDelete;
     [SerializeField] private GameObject[] objectsToDrop;
 
+    [SerializeField] private GameObject FishBarrelPlatform;
+    [SerializeField] private GameObject[] disableOnFishBarrel;
+
     private void Start(){
-        
+
     }
 
     public void OnPress(){
@@ -42,7 +46,13 @@ public class Interactable : MonoBehaviour{
                 active = false;
             }
             else { // if fish barrel
-                
+                foreach (var i in disableOnFishBarrel) {
+                    i.SetActive(false);
+                }
+
+                GameObject platform = Instantiate(FishBarrelPlatform);
+                platform.GetComponent<BarrelController>().enableOnExit = disableOnFishBarrel;
+                active = false;
             }
         }
     }

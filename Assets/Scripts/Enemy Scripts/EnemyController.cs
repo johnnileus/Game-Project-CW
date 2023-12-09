@@ -67,7 +67,6 @@ public class EnemyController : MonoBehaviour{
     }
 
     public void Kill(){
-        agent.SetDestination(transform.position);
         modelAnimator.Play("pistol death");
         curState = ActionStates.Dead;
         agent.enabled = false;

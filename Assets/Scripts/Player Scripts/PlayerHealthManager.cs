@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerHealthManager : MonoBehaviour{
 
+    public static PlayerHealthManager instance;
+    
     [SerializeField] private float maxHealth;
     [SerializeField] private AnimationCurve vignetteRadius;
     [SerializeField] private VignetteEffect vignetteScript;
@@ -16,6 +18,11 @@ public class PlayerHealthManager : MonoBehaviour{
     // Start is called before the first frame update
     void Start(){
         health = maxHealth;
+    }
+    
+    private void Awake(){
+        if (instance != null && instance != this) { Destroy(this); } 
+        else { instance = this; } 
     }
 
     public void UpdateVignette(){

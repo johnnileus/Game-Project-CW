@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cinemachine.Utility;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -32,7 +33,7 @@ public class FlockingController : MonoBehaviour{
     [Header("Alignment")]
     [SerializeField][Range(0f,.99f)] private float alignmentStrength;
 
-
+    [Header("Other")] [SerializeField] private float gunRadius;
 
     private List<Fish> fishes = new List<Fish>();
     
@@ -51,7 +52,7 @@ public class FlockingController : MonoBehaviour{
             newFish.pos = new Vector2(Random.Range(-3f, 3f), Random.Range(-3f, 3f));
             newFish.vel = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * fishSpeed;
             fishes.Add(newFish);
-            Vector3 pos = new Vector3(0, 0, 0);
+            Vector3 pos = new Vector3(0, Random.Range(-1f, 1f), 0);
             GameObject newFishGO = Instantiate(FishPrefab, pos, Quaternion.identity, FishesGO.transform);
         }
     }
@@ -68,6 +69,27 @@ public class FlockingController : MonoBehaviour{
         }
     }
 
+    public int GetFishCount(){
+        return fishes.Count;
+    }
+    
+    public void AttackFish(Vector2 pos){
+        print(pos);
+        for (int i = fishAmt - 1; i >= 0; i--) {
+            if (Vector2.Distance(pos, fishes[i].pos) < gunRadius) {
+                KillFish(i);
+            }
+        }
+    }
+    
+    private void KillFish(int num){
+        fishes.RemoveAt(num);
+        Destroy(FishesGO.transform.GetChild(num).gameObject);
+        fishAmt--;
+        print($"killed fish {num}");
+        
+    }
+    //improve
     private void Update(){
         for (int i = 0; i < fishAmt; i++) {
             Fish fish = fishes[i];
