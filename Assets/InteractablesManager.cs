@@ -7,6 +7,9 @@ public class InteractablesManager : MonoBehaviour{
 
     [SerializeField] private float interactDist;
 
+    public static InteractablesManager instance;
+    
+
     public (Transform, float) FindClosestItem(Vector3 plrPos){
         if (transform.childCount > 0) {
             float closestDist = Single.PositiveInfinity;
@@ -28,7 +31,12 @@ public class InteractablesManager : MonoBehaviour{
             return (null, Single.PositiveInfinity);
         }
     }
-
+    
+    private void Awake(){
+        if (instance != null && instance != this) { Destroy(this); } 
+        else { instance = this; } 
+    }
+    
     private void Update(){
         if (Input.GetKeyDown(KeyCode.E)) {
             print("e");

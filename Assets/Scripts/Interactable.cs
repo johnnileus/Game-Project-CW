@@ -20,10 +20,14 @@ public class Interactable : MonoBehaviour{
     [SerializeField] private GameObject[] objectsToDrop;
 
     [SerializeField] private GameObject FishBarrelPlatform;
-    [SerializeField] private GameObject[] disableOnFishBarrel;
+    private List<GameObject> disableOnFishBarrel = new List<GameObject>();
 
     private void Start(){
+        disableOnFishBarrel.Add(GameObject.FindWithTag("Player"));
+        disableOnFishBarrel.Add(GameObject.FindWithTag("MainCanvas"));
+        disableOnFishBarrel.Add(GameObject.FindWithTag("Map"));
 
+        transform.parent = InteractablesManager.instance.transform;
     }
 
     public void OnPress(){

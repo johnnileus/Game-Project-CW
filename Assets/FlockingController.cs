@@ -25,6 +25,7 @@ public class FlockingController : MonoBehaviour{
     [Header("Repulsion")]
     [SerializeField] private float repulsionVisionDist;
     [SerializeField] private float repulsionStrength;
+
     [SerializeField] private float maxRepulsion;
     
     [Header("Cohesion")]
@@ -33,9 +34,14 @@ public class FlockingController : MonoBehaviour{
     [Header("Alignment")]
     [SerializeField][Range(0f,.99f)] private float alignmentStrength;
 
+    [Header("Avoidance")] // from mouse
+    [SerializeField] private float avoidanceStrength;
+    [SerializeField] private float avoidanceRadius;
+    
     [Header("Other")] [SerializeField] private float gunRadius;
 
     private List<Fish> fishes = new List<Fish>();
+    private Vector2 mousePos;
     
     private struct Fish{
         public Vector2 pos;
@@ -56,6 +62,11 @@ public class FlockingController : MonoBehaviour{
             GameObject newFishGO = Instantiate(FishPrefab, pos, Quaternion.identity, FishesGO.transform);
         }
     }
+
+    public void UpdateMousePos(Vector2 newPos){
+        mousePos = newPos;
+    }
+    
     //update fish game objects to line up with fishes array
     private void UpdateFish(){
         for (int i = 0; i < fishAmt; i++) {
@@ -149,16 +160,6 @@ public class FlockingController : MonoBehaviour{
                 fish.vel -= repulsion;
             }
 
-
-
-            
-
-            
-            
-            
-            
-            
-            
             //reflect if outside of barrel
             if (distToCenter > barrelSize) {
                 fish.vel = Vector2.Reflect(fish.vel, -fish.pos.normalized);
@@ -173,7 +174,11 @@ public class FlockingController : MonoBehaviour{
 
             }
 
-            
+            //avoid mouse
+            float distToMouse = Vector2.Distance(mousePos, fish.pos);
+            if (distToMouse < avoidanceRadius) {
+                fish.vel += (fish.pos - mousePos).normalized / distToMouse * avoidanceStrength;
+            }
             
             //lerp to normalise
             float speedMag = fish.vel.magnitude;

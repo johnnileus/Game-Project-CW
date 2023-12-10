@@ -15,11 +15,11 @@ public class BarrelController : MonoBehaviour{
     [SerializeField] private float minigameTime;
     [SerializeField] private LayerMask barrelPlaneLayer;
 
-    [SerializeField] private GameObject BarrelCanvas;
-    [SerializeField] private GameObject WinScreen;
-    [SerializeField] private GameObject LoseScreen;
+     private GameObject BarrelCanvas;
+     private GameObject WinScreen;
+     private GameObject LoseScreen;
 
-    [HideInInspector] public GameObject[] enableOnExit;
+    [HideInInspector] public List<GameObject> enableOnExit;
     
     public void SendToWorld(){
         foreach (var i in enableOnExit) {
@@ -56,25 +56,30 @@ public class BarrelController : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if (!ended) {
+            
+            
             if (startTime + minigameTime < Time.time) {
                 BarrelCanvas.SetActive(true);
                 LoseScreen.SetActive(true);
                 ended = true;
             }
             else {
+                
+                RaycastHit hit;
+                Vector3 destination;
+                Vector2 mousePos = Input.mousePosition;
+                Ray ray = cam.ViewportPointToRay(new Vector3(mousePos.x/Screen.width, mousePos.y/Screen.height, 0f));
+                Vector2 pos = Vector2.zero;
+                if (Physics.Raycast(ray, out hit, 100, barrelPlaneLayer)) {
+                    destination = hit.point - transform.position;
+                    pos = new Vector2(destination.x, destination.z);
+                    
+                }
+                
+                
                 if (Input.GetMouseButtonDown(0)) {
-
-                    RaycastHit hit;
-                    Vector3 destination;
-                    Vector2 mousePos = Input.mousePosition;
-                    Ray ray = cam.ViewportPointToRay(new Vector3(mousePos.x/Screen.width, mousePos.y/Screen.height, 0f));
-                    print(mousePos);
-                    if (Physics.Raycast(ray, out hit, 100, barrelPlaneLayer)) {
-                        print(hit.point);
-                        destination = hit.point - transform.position;
-                        Vector2 pos = new Vector2(destination.x, destination.z);
-                        flock.AttackFish(pos);
-                    }
+                    flock.AttackFish(pos);
+                    
                     int rem = flock.GetFishCount();
                     if (rem == 0) {
                         BarrelCanvas.SetActive(true);
@@ -83,6 +88,9 @@ public class BarrelController : MonoBehaviour{
                         won = true;
 
                     }
+                }
+                else {
+                    flock.UpdateMousePos(pos);
                 }
 
             }

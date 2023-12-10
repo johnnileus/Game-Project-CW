@@ -17,8 +17,8 @@ public class EnemyController : MonoBehaviour{
     [SerializeField] private float alertDecRate;
     
     private NavMeshAgent agent;
-    private GameObject player;
-    [SerializeField] private GameObject coverPoints;
+    private GameObject player; 
+    [HideInInspector] public GameObject coverPoints;
     [SerializeField] private Animator modelAnimator;
     [SerializeField] private LayerMask layersToIgnore;
     [SerializeField] private float enemyHeadHeight;
@@ -45,7 +45,7 @@ public class EnemyController : MonoBehaviour{
         Dead
     }
 
-
+    public DungeonRoom parentRoom;
     private ActionStates curState = ActionStates.Idle;
 
     
@@ -63,14 +63,16 @@ public class EnemyController : MonoBehaviour{
         if (health <= 0) {
             Kill();
         }
-        print($"{health} {dmg}");
     }
 
     public void Kill(){
-        modelAnimator.Play("pistol death");
-        curState = ActionStates.Dead;
-        agent.enabled = false;
-        health = 0;
+        if (curState != ActionStates.Dead) {
+            modelAnimator.Play("pistol death");
+            curState = ActionStates.Dead;
+            agent.enabled = false;
+            parentRoom.ReduceEnemyCount();
+            health = 0;}
+        
     }
 
     private void SetNewPatrol(){

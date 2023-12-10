@@ -58,7 +58,7 @@ Transform:
   m_GameObject: {fileID: 414839445121753024}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 1, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1149269810557723333}
@@ -789,6 +789,8 @@ MonoBehaviour:
   maxRepulsion: 2.72
   cohesionStrength: 0.103
   alignmentStrength: 0.386
+  avoidanceStrength: 3
+  avoidanceRadius: 1
   gunRadius: 3
 --- !u!114 &4287228618350276925
 MonoBehaviour:
@@ -802,13 +804,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571128eef96d6064c8186a87c43eb8a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minigameTime: 5
+  minigameTime: 20
   barrelPlaneLayer:
     serializedVersion: 2
     m_Bits: 512
-  BarrelCanvas: {fileID: 0}
-  WinScreen: {fileID: 0}
-  LoseScreen: {fileID: 0}
+  enableOnExit: []
 --- !u!1 &7076084752114276792
 GameObject:
   m_ObjectHideFlags: 0

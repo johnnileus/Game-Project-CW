@@ -1243,7 +1243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8402c613db4c7904f862af6cae514380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 1
   lookAtRotSpeed: 5
   alertIncRate: 0.2
   alertDecRate: 0.5
@@ -1284,6 +1284,7 @@ MonoBehaviour:
   shootOffset: 0.3
   yellowAlert: {fileID: 3594038217370045451}
   redAlert: {fileID: 2691145846162908909}
+  parentRoom: {fileID: 0}
 --- !u!195 &1129542017553165057
 NavMeshAgent:
   m_ObjectHideFlags: 0
