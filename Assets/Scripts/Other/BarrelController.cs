@@ -53,19 +53,18 @@ public class BarrelController : MonoBehaviour{
         WinScreen = BarrelCanvas.transform.GetChild(0).gameObject;
         LoseScreen = BarrelCanvas.transform.GetChild(1).gameObject;
     }
-
-    // Update is called once per frame
+    
     void Update(){
         if (!ended) {
-            
-            
-            if (startTime + minigameTime < Time.time) {
+            if (startTime + minigameTime < Time.time) { // check if time ran out
                 BarrelCanvas.SetActive(true);
                 LoseScreen.SetActive(true);
                 ended = true;
             }
             else {
                 
+                
+                //raycast from camera to barrel plane (plane is aligned with fish objects)
                 RaycastHit hit;
                 Vector3 destination;
                 Vector2 mousePos = Input.mousePosition;
@@ -82,7 +81,7 @@ public class BarrelController : MonoBehaviour{
                     flock.AttackFish(pos);
                     
                     int rem = flock.GetFishCount();
-                    if (rem == 0) {
+                    if (rem == 0) { // if no fish left
                         BarrelCanvas.SetActive(true);
                         WinScreen.SetActive(true);
                         ended = true;
@@ -91,7 +90,7 @@ public class BarrelController : MonoBehaviour{
                     }
                 }
                 else {
-                    flock.UpdateMousePos(pos);
+                    flock.UpdateMousePos(pos); // update mouse position on plane for mouse avoidance
                 }
 
             }

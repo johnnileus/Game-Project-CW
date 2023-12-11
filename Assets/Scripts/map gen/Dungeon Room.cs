@@ -49,16 +49,20 @@ public class DungeonRoom : MonoBehaviour{
     public void SpawnEnemies(){
         if (!initialised) { 
             for (int i = 0; i < enemyTotal; i++) {
-                Vector3 pos = new Vector3(Random.Range(-20f, 20f), 3f,Random.Range(-20f, 20f)) + transform.position;
+                
+                Vector3 pos = new Vector3(Random.Range(-20f, 20f), 3f,Random.Range(-20f, 20f)) + transform.position; // random position in room
                 GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.identity, transform);
                 EnemyController enemyScript = enemy.GetComponent<EnemyController>();
                 enemyScript.parentRoom = this;
                 enemyScript.coverPoints = coverPoints;
             }
+
+            initialised = true;
         }
        
     }
     
+    // reduce count when enemy dies, open room if no enemies
     public void ReduceEnemyCount(){
         enemyCount--;
         if (enemyCount == 0) {

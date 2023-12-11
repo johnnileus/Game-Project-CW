@@ -12,6 +12,7 @@ public class EnemyHitbox : MonoBehaviour{
 
     // Start is called before the first frame update
     void Start(){
+        //damage multiplier for given hitbox
         dmgDict = new Dictionary<string, float> {
             { "head", 3f},
             {  "upper chest", 1.2f},
@@ -31,10 +32,5 @@ public class EnemyHitbox : MonoBehaviour{
 
     public void KillEnemy(){
         parentEnemy.Kill();
-    }
-    
-    // Update is called once per frame
-    void Update(){
-        
     }
 }

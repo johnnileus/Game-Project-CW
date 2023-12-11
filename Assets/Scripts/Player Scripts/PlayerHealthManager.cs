@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerHealthManager : MonoBehaviour{
 
+    //singleton
     public static PlayerHealthManager instance;
     
     [SerializeField] private float maxHealth;
@@ -26,7 +27,7 @@ public class PlayerHealthManager : MonoBehaviour{
         else { instance = this; } 
     }
 
-    public void UpdateVignette(){
+    private void UpdateVignette(){
         vignetteScript.radius = vignetteRadius.Evaluate(health / maxHealth);
     }
     
@@ -52,6 +53,7 @@ public class PlayerHealthManager : MonoBehaviour{
     // Update is called once per frame
     void Update()
     {
+        //autoheal
         if (lastDamaged + healDelay < Time.time) {
             HealPlayer(healRate * Time.deltaTime);
         }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// attach to object to destroy with timer
 public class SelfDestroy : MonoBehaviour{
     [SerializeField] private float timeToLive;
     private float initTime;

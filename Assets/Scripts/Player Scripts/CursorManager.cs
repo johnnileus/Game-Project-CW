@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CursorManager : MonoBehaviour{
-
+    
+    //singleton
     public static CursorManager instance { get; private set; }
 
     [SerializeField] private Texture2D barrelCursor;
     private bool active = false;
 
-
+    
+    //changes cursor texture to barrelCursor or default
     public void SetCursor(bool active){
         this.active = active;
         if (active) {
@@ -32,17 +34,5 @@ public class CursorManager : MonoBehaviour{
         { 
             instance = this; 
         } 
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

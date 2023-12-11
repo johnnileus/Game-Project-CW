@@ -9,8 +9,8 @@ public class PlayerScoreManager : MonoBehaviour{
     private int barrelsCompleted;
     
     
-    
-    static public PlayerScoreManager instance;
+    //singleton
+    public static PlayerScoreManager instance;
 
     private void Awake(){
         if (instance != null && instance != this) { Destroy(this); } 
@@ -27,25 +27,12 @@ public class PlayerScoreManager : MonoBehaviour{
     }
     
     public float GetDifficulty(){
-        //replace with good difficulty calc
-        float dif = Mathf.Log(enemiesKilled + barrelsCompleted);
+        float dif = Mathf.Log(enemiesKilled + barrelsCompleted);// replace with good difficulty calc
         print($"{dif}");
         return dif;
     }
     
     public void ResetScene() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

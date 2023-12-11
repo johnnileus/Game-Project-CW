@@ -7,26 +7,25 @@ using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
+// generates a series of rooms on a grid
 public class MapGenerator1 : MonoBehaviour{
-
-
-
     
     public int gridWidth;
     public int gridHeight;
 
     public GameObject mapRoot;
     
+    //cells on the edge of current generation frame
     List<Vector2Int> frontierCells = new List<Vector2Int>();
     private struct Cell{ 
         public bool active;
-        public bool frontier;
-        public bool N;
-        public bool E;
+        public bool frontier; 
+        public bool N; //north connection is active
+        public bool E; // ^
         public bool S;
         public bool W;
-        public int depth;
-        public int startDirection; //0-3 N-W
+        public int depth; //distance from start
+        public int startDirection; //0-3 -> N-W
     }
     public float cellWidth;
     public float cellHeight;
@@ -37,6 +36,7 @@ public class MapGenerator1 : MonoBehaviour{
     private int furthestDist;
     private Vector2Int furthestCell;
 
+    //game object arrays for random room selection. directions on the end (NES) dictate what doors that room has. (north is always active)
     public GameObject[] roomPrefabN;
     public GameObject[] roomPrefabNE;
     public GameObject[] roomPrefabNES;
@@ -47,7 +47,7 @@ public class MapGenerator1 : MonoBehaviour{
     public GameObject gateRoom;
     public NavMeshSurface navMeshSurface;
 
-    //rotation amount
+    //amount to rotate rooms based on active connections in map
     private Dictionary<(bool, bool, bool, bool), float>
         rotationDict = new Dictionary<(bool, bool, bool, bool), float>() {
             {(true, false, false, false), 0}, //n
@@ -73,7 +73,7 @@ public class MapGenerator1 : MonoBehaviour{
             
         };
     
-    //room prefabs
+    //active connections to room prefab
     private Dictionary<(bool, bool, bool, bool), GameObject[]> prefabDict = new Dictionary<(bool, bool, bool, bool), GameObject[]>();
 
     private Cell CreateDefaultCell(){
@@ -99,7 +99,8 @@ public class MapGenerator1 : MonoBehaviour{
 
         map[y, x] = cell;
     }
-
+    
+    //initialise map with closed cells
     void InitMap(){
         for (int y = 0; y < gridHeight; y++) {
             for (int x = 0; x < gridWidth; x++) {
@@ -108,9 +109,11 @@ public class MapGenerator1 : MonoBehaviour{
         }
     }
 
+    //generates game objects once map is done generating
     void GenerateModels(){
         for (int y = 0; y < gridHeight; y++) {
             for (int x = 0; x < gridWidth; x++) {
+                //get world pos
                 Vector3 pos = new Vector3(
                     x * (cellWidth + hallwayLength) - (cellWidth + hallwayLength) * gridWidth/2,
                     1,
@@ -119,6 +122,7 @@ public class MapGenerator1 : MonoBehaviour{
                 Cell cell = map[y, x];
                 (bool, bool, bool, bool) dirs = (cell.N, cell.E, cell.S, cell.W);
                 
+                //choose random prefab and get rotation for given connection directions
                 GameObject[] prefabs = prefabDict[dirs];
                 GameObject prefab = prefabs[Random.Range(0, prefabs.Length)];
                 float yRot = rotationDict[dirs];
@@ -126,6 +130,8 @@ public class MapGenerator1 : MonoBehaviour{
                 Quaternion rot = Quaternion.Euler(0, yRot, 0);
 
                 GameObject newCell;
+                
+                //if looped cell is furthest from start, create gate room
                 if (x == furthestCell.x && y == furthestCell.y) {
                     newCell = Instantiate(gateRoom, pos, rot, mapRoot.transform);
                 }
@@ -139,7 +145,8 @@ public class MapGenerator1 : MonoBehaviour{
                 roomScript.roomID = y * gridWidth + x;
                 roomScript.startDirection = map[y, x].startDirection;
                 roomScript.roomRotation = yRot;
-
+                
+                //create hall prefab to connect rooms
                 if (map[y, x].E) {
                     Vector3 hallPos = pos + new Vector3(cellWidth / 2 + hallwayLength / 2, 0, 0);
                     prefab = hallwayPrefabs[Random.Range(0, hallwayPrefabs.Length)];
@@ -169,7 +176,7 @@ public class MapGenerator1 : MonoBehaviour{
     
 
     //cells must touch eachother
-    // 
+    // carves out a connection between two adjacent cells
     void CarvePassage(Vector2Int frontierCell, Vector2Int activeCell){
         if (frontierCell.x > activeCell.x) { // cell 1 is right of cell 2
             map[frontierCell.y, frontierCell.x].W = true;
@@ -193,7 +200,7 @@ public class MapGenerator1 : MonoBehaviour{
         }
         
     }
-
+    
     bool IsInsideGrid(int x, int y){
         if (x >= 0 && x < gridWidth ) {
             if (y >= 0 && y < gridHeight) {
@@ -204,6 +211,7 @@ public class MapGenerator1 : MonoBehaviour{
         return false;
     }
 
+    //gets all orthogonal active cells
     List<Vector2Int> GetActiveNeighbours(Vector2Int cell) {
         List<Vector2Int> activeNeighbours = new List<Vector2Int>();
         
@@ -221,7 +229,8 @@ public class MapGenerator1 : MonoBehaviour{
         }
         return activeNeighbours;
     }
-
+    
+    // sets all unactive neighboured cells to frontier cells
     void SetNeighboursAsFrontier(Vector2Int cell){
         //above
         if (IsInsideGrid(cell.x, cell.y + 1) && !map[cell.y + 1, cell.x].active && !map[cell.y + 1, cell.x].frontier) {
@@ -245,6 +254,7 @@ public class MapGenerator1 : MonoBehaviour{
         }
     }
 
+    // prints map to console (testing)
     void printMap(){
         string output = "\n";
         for (int y = gridHeight-1; y >= 0; y--) {
@@ -258,6 +268,7 @@ public class MapGenerator1 : MonoBehaviour{
         print(output);
     }
     
+    //main call function
     private void GenerateMap(){
         map = new Cell[gridHeight,gridWidth];
         
@@ -275,27 +286,22 @@ public class MapGenerator1 : MonoBehaviour{
 
         
         SetNeighboursAsFrontier(new Vector2Int(startX, startY));
-
-
+        
         while (frontierCells.Count > 0) {
-
-            
-
             int randomIndex = Random.Range(0, frontierCells.Count);
             Vector2Int currentCell = frontierCells[randomIndex];
             frontierCells.RemoveAt(randomIndex);
 
 
 
-
+            //carve corridor between frontier cell and random active neighbour
             List<Vector2Int> activeNeighbours = GetActiveNeighbours(currentCell);
             randomIndex = Random.Range(0, activeNeighbours.Count);
-
             Vector2Int chosenNeighbour = activeNeighbours[randomIndex];
             map[currentCell.y, currentCell.x].active = true;
             CarvePassage(currentCell, chosenNeighbour);
             int newDist = map[chosenNeighbour.y, chosenNeighbour.x].depth + 1;
-
+            
             if (newDist > furthestDist) {
                 furthestDist = newDist;
                 furthestCell = new Vector2Int(currentCell.x, currentCell.y);
@@ -319,7 +325,7 @@ public class MapGenerator1 : MonoBehaviour{
     void Start()
     {
         
-
+        //init prefabDict
         prefabDict.Add((true, false, false, false), roomPrefabN);
         prefabDict.Add((false, true, false, false), roomPrefabN);
         prefabDict.Add((false, false, true, false), roomPrefabN);
@@ -344,13 +350,7 @@ public class MapGenerator1 : MonoBehaviour{
 
         GenerateMap();
         
-        navMeshSurface.BuildNavMesh();
+        navMeshSurface.BuildNavMesh(); // navmesh for enemy AI
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

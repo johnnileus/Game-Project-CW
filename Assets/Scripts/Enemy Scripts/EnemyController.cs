@@ -28,7 +28,7 @@ public class EnemyController : MonoBehaviour{
 
     [SerializeField] private AnimationCurve hitChance;
     [SerializeField] private GameObject gunFlash;
-    [SerializeField] private Transform shootPoint;
+    [SerializeField] private Transform shootPoint; // init particle systems here
     [SerializeField] private float shootDelay;
     [SerializeField] private float shootOffset;
     private float lastShot;
@@ -47,9 +47,7 @@ public class EnemyController : MonoBehaviour{
 
     public DungeonRoom parentRoom;
     private ActionStates curState = ActionStates.Idle;
-
     
-    // Start is called before the first frame update
     void Start(){
         health = maxHealth;
         agent = GetComponent<NavMeshAgent>();
@@ -69,20 +67,21 @@ public class EnemyController : MonoBehaviour{
         if (curState != ActionStates.Dead) {
             modelAnimator.Play("pistol death");
             curState = ActionStates.Dead;
-            agent.enabled = false;
+            agent.enabled = false; //disable pathfinding
             parentRoom.ReduceEnemyCount();
             PlayerScoreManager.instance.IncrementKillCount();
-            
-            health = 0;}
-        
+            health = 0;
+        }
     }
-
+    
+    //picks random point in circle as new patrol point
     private void SetNewPatrol(){
         float angle = Random.Range(0, 2*Mathf.PI);
         Vector3 newPoint = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle));
         agent.SetDestination(newPoint * 3 + transform.position);
     }
-
+    
+    //finds closest unoccupied cover in the room
     private Transform GetClosestCover(Vector3 pos){
         float dist = 99999;
         Transform closestCover = null;
@@ -104,6 +103,7 @@ public class EnemyController : MonoBehaviour{
         
     }
 
+    //sets alert value, if alert=true, moves to closest cover point
     private void SetAlert(bool alert){
         alerted = alert;
         if (alert) {
@@ -112,13 +112,12 @@ public class EnemyController : MonoBehaviour{
             closestCover.GetComponent<boolAttribute>().value = true;
         }
     }
-
+    
     private void turnToPlayer(){
         var rot = Quaternion.LookRotation(player.transform.position - transform.position, Vector3.up);
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, lookAtRotSpeed * Time.deltaTime);
     }
-    
-    // Update is called once per frame
+
     void Update(){
         if (curState != ActionStates.Dead) {
 
@@ -134,14 +133,14 @@ public class EnemyController : MonoBehaviour{
             if (LOS) {
                 alertness += alertIncRate * Time.deltaTime;
             }
-            else {
+            else { // no LOS
                 alertness -= alertDecRate * Time.deltaTime;
                 if (alertness < 0) {
                     alertness = 0;
                 }
             }
             
-            //patrol
+            //patrol when not alerted
             if (!alerted) {
                 if (lastPatrol + patrolDelay < Time.time) {
                     SetNewPatrol();
@@ -191,7 +190,7 @@ public class EnemyController : MonoBehaviour{
                 if (lastShot + shootDelay < Time.time) {
                     lastShot = Time.time + Random.Range(-shootOffset, shootOffset);
                     Instantiate(gunFlash, shootPoint.position, Quaternion.identity);
-                    if (Random.Range(0f, 1f) < hitChance.Evaluate(dist)) {
+                    if (Random.Range(0f, 1f) < hitChance.Evaluate(dist)) { // damage player based on hit chance
                         player.GetComponent<PlayerHealthManager>().DamagePlayer(10);
                     }
                 }

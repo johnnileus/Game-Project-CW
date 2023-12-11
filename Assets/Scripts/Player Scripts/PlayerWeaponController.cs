@@ -28,13 +28,14 @@ public class PlayerWeaponController : MonoBehaviour{
     // Update is called once per frame
     void Update()
     {
-        //test if can shoot twice in frame
+        //checks if timer to shoot is over when lmb is clicked
         if (Input.GetMouseButton(0) && lastShot + pistolShootDelay < Time.time) {
             lastShot = Time.time; 
             RaycastHit hit;
             Vector3 destination;
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-
+            
+            //raycast from camera
             if (Physics.Raycast(ray, out hit, 100, ~layersToIgnore)) {
                 destination = hit.point;
             
@@ -43,6 +44,7 @@ public class PlayerWeaponController : MonoBehaviour{
                 destination = ray.GetPoint(100);
             }
             
+            //if ray hit an enemy's hitbox
             if (hit.collider && hit.collider.gameObject.CompareTag("EnemyHitbox")) {
                 Instantiate(BloodPS, destination, Quaternion.identity, gameObject.transform);
                 hit.collider.gameObject.GetComponent<EnemyHitbox>().OnHit(1);

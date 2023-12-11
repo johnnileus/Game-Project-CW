@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
+
+//fish flock controller in barrel minigame
 public class FlockingController : MonoBehaviour{
 
     [Header("Fish")]
@@ -40,29 +42,33 @@ public class FlockingController : MonoBehaviour{
     
     [Header("Other")] [SerializeField] private float gunRadius;
 
+    private struct Fish{ 
+        public Vector2 pos; 
+        public Vector2 vel; }
     private List<Fish> fishes = new List<Fish>();
+    
     private Vector2 mousePos;
     
-    private struct Fish{
-        public Vector2 pos;
-        public Vector2 vel;
-    }
-
+    
+    //updates fish game-object position
     private void SetFishGOPos(Fish fish, Transform GO){
         GO.position = new Vector3(fish.pos.x, 0, fish.pos.y) + FishesGO.transform.position;
     }
 
+    //instantiates fish list and game objects
     private void Start(){
         for (int i = 0; i < fishAmt; i++) {
+            
             Fish newFish = new Fish();
             newFish.pos = new Vector2(Random.Range(-3f, 3f), Random.Range(-3f, 3f));
             newFish.vel = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * fishSpeed;
             fishes.Add(newFish);
+            
             Vector3 pos = new Vector3(0, Random.Range(-1f, 1f), 0);
             GameObject newFishGO = Instantiate(FishPrefab, pos, Quaternion.identity, FishesGO.transform);
         }
     }
-
+    
     public void UpdateMousePos(Vector2 newPos){
         mousePos = newPos;
     }
@@ -84,6 +90,7 @@ public class FlockingController : MonoBehaviour{
         return fishes.Count;
     }
     
+    //removes fish nearby "pos"
     public void AttackFish(Vector2 pos){
         print(pos);
         for (int i = fishAmt - 1; i >= 0; i--) {
@@ -93,24 +100,26 @@ public class FlockingController : MonoBehaviour{
         }
     }
     
+    //removes fish from scene and fishes list
     private void KillFish(int num){
         fishes.RemoveAt(num);
         Destroy(FishesGO.transform.GetChild(num).gameObject);
         fishAmt--;
 
     }
-    //improve
+
     private void Update(){
-        for (int i = 0; i < fishAmt; i++) {
+        for (int i = 0; i < fishAmt; i++) { // loop over every fish
             Fish fish = fishes[i];
-            fish.pos += fish.vel / 100;
+            fish.pos += fish.vel / 100; // update based on velocity
             float distToCenter = Vector2.Distance(fish.pos, Vector2.zero);
 
             Vector2 totalVel = Vector2.zero;
             Vector2 totalPos = Vector2.zero;
             Vector2 totalRepulsion = Vector2.zero;
+            
             float fishInRange = 0;
-            float fishInRangeRep = 0;
+            float fishInRangeRep = 0; //repulsion force
             for (int j = 0; j < fishAmt; j++) {
                 if (i != j) {
                     float dist = Vector2.Distance(fish.pos, fishes[j].pos);
@@ -124,7 +133,7 @@ public class FlockingController : MonoBehaviour{
                         if (dist < repulsionVisionDist) {
                             fishInRangeRep++;
                             Vector2 vecToFish = (fishes[j].pos - fish.pos).normalized;
-                            Vector2 fishRep = vecToFish * (1 / Vector2.Distance(fish.pos, fishes[j].pos));
+                            Vector2 fishRep = vecToFish * (1 / Vector2.Distance(fish.pos, fishes[j].pos)); // vector2 pushing fish away
                             totalRepulsion += fishRep;
                             
                             
@@ -179,7 +188,7 @@ public class FlockingController : MonoBehaviour{
                 fish.vel += (fish.pos - mousePos).normalized / distToMouse * avoidanceStrength;
             }
             
-            //lerp to normalise
+            // todo add lerp
             float speedMag = fish.vel.magnitude;
             fish.vel = fish.vel * fishSpeed / speedMag;
 

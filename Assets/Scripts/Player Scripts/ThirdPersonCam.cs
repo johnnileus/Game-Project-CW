@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 
+//third person camera controller using Cinemachine
 public class ThirdPersonCam : MonoBehaviour{
 
     public Transform orientation;

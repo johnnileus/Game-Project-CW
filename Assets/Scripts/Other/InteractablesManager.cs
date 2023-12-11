@@ -7,9 +7,10 @@ public class InteractablesManager : MonoBehaviour{
 
     [SerializeField] private float interactDist;
 
+    //singleton
     public static InteractablesManager instance;
     
-
+    //returns the closest active interactable item
     public (Transform, float) FindClosestItem(Vector3 plrPos){
         if (transform.childCount > 0) {
             float closestDist = Single.PositiveInfinity;
@@ -37,8 +38,10 @@ public class InteractablesManager : MonoBehaviour{
         else { instance = this; } 
     }
     
+    
     private void Update(){
-        if (Input.GetKeyDown(KeyCode.E)) {
+        
+        if (Input.GetKeyDown(KeyCode.E)) { //activate closest interactable if in range
             (Transform closest, float dist) = FindClosestItem(GameObject.FindWithTag("Player").transform.position);
             if (dist < interactDist) {
                 closest.GetComponent<Interactable>().OnPress();

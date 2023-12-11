@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// attach to object to rotate to face camera
 public class LookAtPlayer : MonoBehaviour{
     private GameObject cameraGO;
 

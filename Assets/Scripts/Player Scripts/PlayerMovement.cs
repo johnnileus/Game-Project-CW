@@ -6,29 +6,30 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
+// player character controller using rigibody
 public class PlayerMovement : MonoBehaviour{
 
-    public float speed;
-    public float runSpeed;
-    public float crouchSpeed;
-    public float crouchHeight;
-    public float extraGravity;
+    [SerializeField] private float speed;
+    [SerializeField] private float runSpeed;
+    [SerializeField] private float crouchSpeed;
+    [SerializeField] private float crouchHeight;
+    [SerializeField] private float extraGravity;
 
-    public float jumpForce;
+    [SerializeField] private float jumpForce;
     private bool readyToJump = true;
-    public float jumpCooldown;
+    [SerializeField] private float jumpCooldown;
     
-    public Transform orientation;
+    [SerializeField] private Transform orientation;
     private Vector3 moveDirection;
-    public GameObject playerModel;
+    [SerializeField] private GameObject playerModel;
 
     private float horizontalInput;
     private float verticalInput;
 
-    public float playerHeight;
-    public LayerMask whatIsGround;
+    [SerializeField] private float playerHeight;
+    [SerializeField] private LayerMask whatIsGround;
     private bool grounded;
-    public float groundDrag;
+    [SerializeField] private float groundDrag;
 
     [SerializeField] private CapsuleCollider cc;
     private Rigidbody rb;
@@ -71,7 +72,8 @@ public class PlayerMovement : MonoBehaviour{
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown);
         }
-
+        
+        
         if (Input.GetKey(KeyCode.LeftControl)) {
             currentState = MovementState.crouch;
             transform.GetComponent<CapsuleCollider>().height = crouchHeight;
@@ -105,7 +107,7 @@ public class PlayerMovement : MonoBehaviour{
     }
 
     void FixedUpdate () {
-        rb.AddForce(Vector3.down * extraGravity * rb.mass);
+        rb.AddForce(Vector3.down * extraGravity * rb.mass); //player specific gravity addition
     }
     
     void SpeedControl(){

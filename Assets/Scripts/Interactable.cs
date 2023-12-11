@@ -21,7 +21,7 @@ public class Interactable : MonoBehaviour{
     [SerializeField] private GameObject[] objectsToDrop;
 
     [SerializeField] private GameObject FishBarrelPlatform;
-    private List<GameObject> disableOnFishBarrel = new List<GameObject>();
+    private List<GameObject> disableOnFishBarrel = new List<GameObject>(); // disable when interacted with
     private GameObject winscreenCanvas;
 
     private void Start(){
@@ -49,7 +49,8 @@ public class Interactable : MonoBehaviour{
                 foreach (var i in objectsToDelete) {
                     Destroy(i);
                 }
-
+                
+                //activate physics for rigidbody
                 foreach (var i in objectsToDrop) {
                     i.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
                 }
@@ -65,7 +66,7 @@ public class Interactable : MonoBehaviour{
                 platform.GetComponent<BarrelController>().enableOnExit = disableOnFishBarrel;
                 active = false;
             }
-            else {
+            else { // win button
                 winscreenCanvas.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;

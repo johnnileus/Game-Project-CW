@@ -7,6 +7,7 @@ using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
+//unused
 public class PlayerMovementCC : MonoBehaviour{
 
     [SerializeField] private float speed;
