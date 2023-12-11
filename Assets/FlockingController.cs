@@ -97,8 +97,7 @@ public class FlockingController : MonoBehaviour{
         fishes.RemoveAt(num);
         Destroy(FishesGO.transform.GetChild(num).gameObject);
         fishAmt--;
-        print($"killed fish {num}");
-        
+
     }
     //improve
     private void Update(){

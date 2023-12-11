@@ -13,15 +13,15 @@ public class EnemyHitbox : MonoBehaviour{
     // Start is called before the first frame update
     void Start(){
         dmgDict = new Dictionary<string, float> {
-            { "head", 9.1f},
-            {  "upper chest", 8f},
-            {  "middle chest", 7f},
-            {  "lower chest", 6f},
-            {  "hip", 5f},
-            {  "upper leg", 4f},
-            {  "lower leg", 3f},
-            {  "upper arm", 2f},
-            {  "lower arm", 1f}
+            { "head", 3f},
+            {  "upper chest", 1.2f},
+            {  "middle chest", 1.3f},
+            {  "lower chest", 1f},
+            {  "hip", 1f},
+            {  "upper leg", .8f},
+            {  "lower leg", .6f},
+            {  "upper arm", .8f},
+            {  "lower arm", .7f}
         };
     }
 

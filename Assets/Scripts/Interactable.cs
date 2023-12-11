@@ -10,7 +10,8 @@ public class Interactable : MonoBehaviour{
 
     enum Options{
         Button,
-        FishBarrel
+        FishBarrel,
+        WinButton
     }
 
     [SerializeField] private Options option;
@@ -21,6 +22,7 @@ public class Interactable : MonoBehaviour{
 
     [SerializeField] private GameObject FishBarrelPlatform;
     private List<GameObject> disableOnFishBarrel = new List<GameObject>();
+    private GameObject winscreenCanvas;
 
     private void Start(){
         disableOnFishBarrel.Add(GameObject.FindWithTag("Player"));
@@ -28,6 +30,11 @@ public class Interactable : MonoBehaviour{
         disableOnFishBarrel.Add(GameObject.FindWithTag("Map"));
 
         transform.parent = InteractablesManager.instance.transform;
+
+        if (option == Options.WinButton) {
+            winscreenCanvas = transform.GetChild(0).gameObject;
+            winscreenCanvas.SetActive(false);
+        }
     }
 
     public void OnPress(){
@@ -49,7 +56,7 @@ public class Interactable : MonoBehaviour{
 
                 active = false;
             }
-            else { // if fish barrel
+            else if (option == Options.FishBarrel) { // if fish barrel
                 foreach (var i in disableOnFishBarrel) {
                     i.SetActive(false);
                 }
@@ -57,6 +64,11 @@ public class Interactable : MonoBehaviour{
                 GameObject platform = Instantiate(FishBarrelPlatform);
                 platform.GetComponent<BarrelController>().enableOnExit = disableOnFishBarrel;
                 active = false;
+            }
+            else {
+                winscreenCanvas.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
         }
     }

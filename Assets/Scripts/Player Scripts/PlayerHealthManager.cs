@@ -9,6 +9,7 @@ public class PlayerHealthManager : MonoBehaviour{
     [SerializeField] private float maxHealth;
     [SerializeField] private AnimationCurve vignetteRadius;
     [SerializeField] private VignetteEffect vignetteScript;
+    [SerializeField] private GameObject gameOverCanvas;
 
     private float lastDamaged;
     [SerializeField] private float healDelay;
@@ -33,7 +34,8 @@ public class PlayerHealthManager : MonoBehaviour{
         health -= amt;
         if (health <= 0) {
             health = 0;
-            print("player dead");
+            gameOverCanvas.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
         }
         lastDamaged = Time.time;
         UpdateVignette();

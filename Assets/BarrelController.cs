@@ -33,6 +33,7 @@ public class BarrelController : MonoBehaviour{
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         CursorManager.instance.SetCursor(false);
+        PlayerScoreManager.instance.IncrementBarrels();
         Destroy(gameObject);
     }
     

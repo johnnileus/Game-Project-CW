@@ -39,9 +39,7 @@ public class InteractablesManager : MonoBehaviour{
     
     private void Update(){
         if (Input.GetKeyDown(KeyCode.E)) {
-            print("e");
             (Transform closest, float dist) = FindClosestItem(GameObject.FindWithTag("Player").transform.position);
-            print($"{dist}");
             if (dist < interactDist) {
                 closest.GetComponent<Interactable>().OnPress();
             }

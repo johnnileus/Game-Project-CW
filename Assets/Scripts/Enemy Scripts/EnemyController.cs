@@ -71,6 +71,8 @@ public class EnemyController : MonoBehaviour{
             curState = ActionStates.Dead;
             agent.enabled = false;
             parentRoom.ReduceEnemyCount();
+            PlayerScoreManager.instance.IncrementKillCount();
+            
             health = 0;}
         
     }

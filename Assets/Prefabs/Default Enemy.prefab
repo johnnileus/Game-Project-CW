@@ -1243,17 +1243,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8402c613db4c7904f862af6cae514380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1
+  maxHealth: 30
   lookAtRotSpeed: 5
-  alertIncRate: 0.2
-  alertDecRate: 0.5
+  alertIncRate: 0.5
+  alertDecRate: 0.3
   coverPoints: {fileID: 0}
   modelAnimator: {fileID: 6421376628759860850}
   layersToIgnore:
     serializedVersion: 2
     m_Bits: 196
   enemyHeadHeight: 2
-  patrolDelay: 2
+  patrolDelay: 4
   hitChance:
     serializedVersion: 2
     m_Curve:
