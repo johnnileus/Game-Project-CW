@@ -37,6 +37,7 @@ public class PlayerHealthManager : MonoBehaviour{
             health = 0;
             gameOverCanvas.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
         lastDamaged = Time.time;
         UpdateVignette();
